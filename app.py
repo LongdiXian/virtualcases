@@ -23,16 +23,79 @@ def release_db_connection(conn):
     pool.putconn(conn)
 
 @app.route("/all", methods=["GET"])
-def aadata():
+def all():
     try:
         conn1 = get_db_connection()
         curse1 = conn1.cursor()
         sql = f"""
-                SELECT username,password,time from public.usertable
+                SELECT chapter,content from public.chapter
             """
         curse1.execute(sql)
         allda = curse1.fetchall()
-        data = [{'userid': row[0], 'password': row[1], 'time': row[2]} for row in allda]
+        data = [{'chapter': row[0], 'content': row[1]} for row in allda]
+        return jsonify(data)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        if conn1:
+            release_db_connection(conn1)
+
+@app.route("/case/<content>", methods=["GET"])
+def case(content):
+    try:
+        cont=content
+        print(cont)
+        conn1 = get_db_connection()
+        curse1 = conn1.cursor()
+        sql = f"""
+                SELECT chapter_content,content from public.abstract where chapter_content='{cont}'
+            """
+        print(sql)
+        curse1.execute(sql)
+        allda = curse1.fetchall()
+        data = [{'chapter': row[0], 'content': row[1]} for row in allda]
+        return jsonify(data)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        if conn1:
+            release_db_connection(conn1)
+
+@app.route("/casenumber/<chapter>", methods=["GET"])
+def casenumber(chapter):
+    try:
+        cont=chapter
+        print(cont)
+        conn1 = get_db_connection()
+        curse1 = conn1.cursor()
+        sql = f"""
+                select DISTINCT case_number from public.content where  chapter_content='{cont}'
+            """
+        print(sql)
+        curse1.execute(sql)
+        allda = curse1.fetchall()
+        data = [{'number': row[0]} for row in allda]
+        return jsonify(data)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        if conn1:
+            release_db_connection(conn1)
+
+@app.route("/content/<casenumber>", methods=["GET"])
+def content(casenumber):
+    try:
+        cont=casenumber
+        print(cont)
+        conn1 = get_db_connection()
+        curse1 = conn1.cursor()
+        sql = f"""
+                select name,content from public.content where case_number={cont}
+            """
+        print(sql)
+        curse1.execute(sql)
+        allda = curse1.fetchall()
+        data = [{'name': row[0],'conent':row[1]} for row in allda]
         return jsonify(data)
     except Exception as e:
         print(f"An error occurred: {e}")
