@@ -41,6 +41,4 @@ def aadata():
             release_db_connection(conn1)
 
 if __name__ == '__main__':
-    app.config['JSON_AS_ASCII'] = False
-    port = int(os.environ.get('PORT', 443))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=443, ssl_context=('cert.pem', 'key.pem'))
