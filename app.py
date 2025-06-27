@@ -106,5 +106,5 @@ def content(casenumber):
 if __name__ == '__main__':
     # app.run(host='0.0.0.0', port=8000, ssl_context=('cert.pem', 'key.pem'))
     app.config['JSON_AS_ASCII'] = False
-    port = int(os.environ.get('PORT', 443))
+    port = int(os.environ.get('PORT', 8000))
     app.run(host='0.0.0.0', port=port)
