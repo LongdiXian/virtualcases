@@ -42,5 +42,5 @@ def aadata():
 
 if __name__ == '__main__':
     app.config['JSON_AS_ASCII'] = False
-    port = int(os.environ.get('PORT', 111))
+    port = int(os.environ.get('PORT', 443))
     app.run(host='0.0.0.0', port=port)
