@@ -1,12 +1,7 @@
 import os
-import boto3
-from connection import conn
-
 from flask import Flask,jsonify
 from flask_cors import CORS
-
 from psycopg2.pool import SimpleConnectionPool
-from botocore.exceptions import NoCredentialsError, PartialCredentialsError,ClientError
 
 app = Flask(__name__)
 CORS(app)
@@ -42,10 +37,8 @@ def aadata():
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:
-        if conn:
-            release_db_connection(conn)
-
-
+        if conn1:
+            release_db_connection(conn1)
 
 if __name__ == '__main__':
     app.config['JSON_AS_ASCII'] = False
