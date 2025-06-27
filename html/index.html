@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>EMA Chatbot Administrator</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2.8/dist/vue.global.prod.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0 auto;
+      padding: 10px;
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    table {
+      width: 100%;
+      max-width: 600px;
+      border-collapse: collapse;
+      background-color: #fff;
+      margin: 20px auto 0 auto;
+      font-size: 1rem;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #ddd;
+      word-break: break-word;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+    td.clickable {
+      color: #007BFF;
+      cursor: pointer;
+      user-select: none;
+    }
+    td.clickable:hover {
+      text-decoration: underline;
+    }
+    @media (max-width: 480px) {
+      body {
+        padding: 5px;
+      }
+      table {
+        font-size: 0.9rem;
+        max-width: 100%;
+      }
+      th, td {
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <table>
+      <thead>
+        <tr>
+          <th>Chapter</th>
+          <th>Disorders' Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="data in fetchedData" :key="data.chapter">
+          <td>{{ data.chapter }}</td>
+          <td class="clickable" @click="openCase(data.content)">{{ data.content }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const App = {
+      data() {
+        return {
+          fetchedData: [],
+        };
+      },
+      async created() {
+        await this.fetchData();
+      },
+      methods: {
+        async fetchData() {
+          try {
+            const response = await fetch(`http://3.27.59.252:8000/all`);
+            const data = await response.json();
+            this.fetchedData = data;
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        },
+        async openCase(caseName) {
+          try {
+            // 编码caseName，防止特殊字符影响URL
+            const encodedCase = encodeURIComponent(caseName);
+            const url = `http://3.27.59.252:8000/case/${encodedCase}`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Network response was not ok');
+            const caseData = await response.json();
+			
+			const cs = encodeURIComponent(caseName);
+			const url1 = `http://3.27.59.252:8000/casenumber/${cs}`;
+			const response1 = await fetch(url1);
+			if (!response1.ok) throw new Error('Network response was not ok');
+			const caseData1 = await response1.json();
+
+            localStorage.setItem('caseData', JSON.stringify(caseData));
+			localStorage.setItem('casenumber', JSON.stringify(caseData1));
+
+            // 打开新窗口显示详情页面
+            const newWindow = window.open('case.html', '_blank');
+            if (!newWindow) {
+              alert('请允许弹出窗口以查看详情');
+            }
+          } catch (error) {
+            alert('获取案例数据失败: ' + error.message);
+          }
+        },
+      },
+    };
+    Vue.createApp(App).mount('#app');
+  </script>
+</body>
+</html>

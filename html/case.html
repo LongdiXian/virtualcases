@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Case Details</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2.8/dist/vue.global.prod.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px auto;
+      max-width: 600px;
+      background-color: #f9f9f9;
+	  min-height: 100vh;
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-top: 30px;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    pre {
+      background: #eee;
+      padding: 15px;
+      border-radius: 5px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-size: 1rem;
+      color: #555;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 30px;
+      display: block;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <template v-if="caseData.length > 0">
+      <div v-for="(item, index) in caseData" :key="index">
+        <h1>ABSTRACT OF {{ item.chapter }}</h1>
+        <pre>{{ item.content }}</pre>
+      </div>
+	  <div v-for="(item, index) in casenumber" :key="index">
+	    <h1 @click="openCase(item.number)" @click="openCase(item.number)"
+    style="
+      border: 2px solid #4CAF50;
+      border-radius: 8px;
+      padding: 12px 20px;
+      cursor: pointer;
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      user-select: none;
+      transition: background-color 0.3s, color 0.3s;
+	  text-align: center;
+    "
+    @mouseover="hover=true"
+    @mouseout="hover=false">Case {{ item.number }}</h1>
+	  </div>
+    </template>
+    <p v-else>Loading or no data available...</p>
+    <button @click="closeWindow">Return to last page</button>
+	<button @click="Gomain">Return to main page</button>
+  </div>
+
+  <script>
+    const App = {
+      data() {
+        return {
+          caseData: [],
+		  casenumber:[],
+        };
+      },
+      mounted() {
+        this.loadCaseData();
+      },
+      methods: {
+        loadCaseData() {
+          try {
+            const rawData = localStorage.getItem('caseData');
+			const rawData1 = localStorage.getItem('casenumber');
+            if (rawData) {
+              this.caseData = JSON.parse(rawData);
+              localStorage.removeItem('casenumber');
+            }
+			if(rawData1){
+				this.casenumber = JSON.parse(rawData1);
+				localStorage.removeItem('rawData1');
+			}
+          } catch (e) {
+            console.error('Error parsing case data:', e);
+          }
+        },
+		async openCase(caseName) {
+		  try {
+		    const encodedCase = encodeURIComponent(caseName);
+		    const url = `http://3.27.59.252:8000/content/${encodedCase}`;
+		    const response = await fetch(url);
+		    if (!response.ok) throw new Error('Network response was not ok');
+		    const caseData = await response.json();
+			localStorage.setItem('content', JSON.stringify(caseData));
+			console.log(caseData);
+		
+		    const newWindow = window.open('content.html', '_blank');
+		    if (!newWindow) {
+		      alert('请允许弹出窗口以查看详情');
+		    }
+		  } catch (error) {
+		    alert('获取案例数据失败: ' + error.message);
+		  }
+		},
+        closeWindow() {
+          window.location.href = 'index.html';
+        },
+		Gomain() {
+		  window.location.href = 'index.html';
+		}
+      }
+    }
+    Vue.createApp(App).mount('#app');
+  </script>
+</body>
+</html>

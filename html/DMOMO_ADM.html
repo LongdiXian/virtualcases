@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMA Chatbot Administrator</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.8/dist/vue.global.prod.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f5f5f5;
+            flex-direction: column;
+            padding: 10px;
+        }
+        table {
+            width: 100%;
+       /*     max-width: 100vh; */
+            border-collapse: collapse;
+            background-color: #fff;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f0f0f0;
+        }
+        button {
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div style="font-size: 30px; text-align: center; width: 100%;">DMOMO 2.0 管理系统</div>
+		<div style="font-size: 20px; text-align: center; width: 100%;float: left;margin-left: 3px;">
+			<br>
+			<h3 style="text-align: center; border-right: brown 2px solid;">查询细节</h3>
+			<br>
+		用户的ID： <input v-model="userid1" /><button @click="fetchDetailData">查询</button>
+		<div style="width: 100%; float: left;">
+		    <table style="border: pink 2px solid; margin-top: 2px;margin: 0 auto;">
+				
+		        <thead>
+		            <tr>
+		                <th>用户名</th>
+		                <th>日期</th>
+		                <th>标签</th>
+		                <th>问题1</th>
+						<th>问题1链接</th>
+		                <th>问题2</th>
+						<th>问题2链接</th>
+		            </tr>
+		        </thead>
+		        <tbody>
+		            <tr v-for="data in detailData" :key="data.date">
+						<td :style="{ backgroundColor: coll(data.record) }">{{ data.username }}</td>
+		                <td :style="{ backgroundColor: coll(data.record) }">{{ data.date }}</td>
+						<td :style="{ backgroundColor: coll(data.record) }">{{ data.label }}</td>
+		                <td :style="{ backgroundColor: coll(data.record) }">{{ data.content }}</td>
+						<td :style="{ backgroundColor: coll(data.record) }">
+						    <video width="320" height="240" controls v-if="currentVideoPath === data.path">
+						        <source :src="ppath" type="video/mp4" />
+						        Your browser does not support the video tag.
+						    </video>
+						    <button @click="geturl(data.path)">观看视频</button>
+						</td>
+						<td :style="{ backgroundColor: coll(data.record) }">{{ data.content1 }}</td>
+		                <td :style="{ backgroundColor: coll(data.record) }">
+		                    <video width="320" height="240" controls v-if="currentVideoPath === data.path1">
+		                        <source :src="ppath" type="video/mp4" />
+		                        Your browser does not support the video tag.
+		                    </video>
+		                    <button @click="geturl(data.path1)">观看视频</button>
+		                </td>
+		            </tr>
+		        </tbody>
+		    </table>
+		</div>
+		</div>
+		<br>
+		<br>
+		<br>
+		
+		<div style="width: 48%; float: left; margin-left: 20px;">
+			<h1></h1>
+			<h3 style="text-align: center; border-right: brown 2px solid;">全部用户已经完成的的统计数据</h3>
+		                <table style="border: brown 2px solid;">
+		                    <thead>
+		                        <tr>
+		                            <th>用户名</th>
+		                            <th>录制的个数</th>
+		                            <th>录制的天数</th>
+		                            <th>开始时间</th>
+									<th>最近使用的时间</th>
+		                        </tr>
+		                    </thead>
+		                    <tbody>
+		                        <tr v-for="item in durationdata" :key="item.id">
+		                            <td :style="{ backgroundColor: getColor(item.total_record / (item.counts * 8)) }">{{ item.username }}</td>
+		                            <td :style="{ backgroundColor: getColor(item.total_record / (item.counts * 8)) }">{{ item.completed_count }}</td>
+		                            <td :style="{ backgroundColor: getColor(item.total_record / (item.counts * 8)) }">{{ item.completed_days }}</td>
+									<td :style="{ backgroundColor: getColor(item.total_record / (item.counts * 8)) }">{{ item.min_date }}</td>
+									<td :style="{ backgroundColor: getColor(item.total_record / (item.counts * 8)) }">{{ item.max_date }}</td>
+		<!--                            <td :style="{ backgroundColor: getColor(item.total_record / (item.counts * 8)) }">
+		                                {{ (item.total_record / (item.counts * 8)).toFixed(2) }}
+		                            </td> -->
+		                        </tr>
+		                    </tbody>
+		    </table>
+		</div>
+		
+		<div style="font-size: 20px; text-align: center; width: 48%;float: left;margin-left: 3px;">
+			<br>
+		 <h3 style="text-align: center; border-right: brown 2px solid;">查询综合</h3>
+		 <br>
+		用户的ID： <input v-model="userid" /><button @click="fetchResearchData">查询</button>
+		<div style="width: 100%; float: left;">
+		    <table style="border: pink 2px solid; margin-top: 2px;">
+		        <thead>
+		            <tr>
+		                <th>Date</th>
+		                <th>已经录制的个数</th>
+		                <th>User ID</th>
+		            </tr>
+		        </thead>
+		        <tbody>
+		            <tr v-for="data in researchData" :key="data.date">
+		                <td :style="{ backgroundColor: coll(data.record) }">{{ data.date }}</td>
+		                <td :style="{ backgroundColor: coll(data.record) }">{{ data.total_record }}</td>
+		                <td :style="{ backgroundColor: coll(data.record) }">{{ data.userid }}</td>
+		            </tr>
+		            <tr>
+		                <td colspan="3">总记录数: {{ totalRecordSum }}</td>
+		            </tr>
+		        </tbody>
+		    </table>
+		</div>
+		</div>
+		
+		
+        </div>
+    </div>
+
+    <script>
+        const App = {
+            data() {
+                return {
+                    fetchedData: [],
+                    aaData: [],
+                    durationdata: [],
+                    userid: null,
+                    userid1: null,
+                    researchData: [],
+                    detailData: [],
+                    ppath: null,
+					currentVideoPath:null
+                };
+            },
+            async created() {
+                await this.fetchData();
+                await this.fetchAAData();
+                await this.allData();
+            },
+            computed: {
+                totalRecordSum() {
+                    return this.researchData.reduce((sum, data) => sum + (data.total_record || 0), 0);
+                },
+            },
+            methods: {
+                getColor(ratio) {
+                    if (ratio < 0.5) {
+                        return 'red';
+                    } else if (ratio < 0.75) {
+                        return 'pink';
+                    } else {
+                        return 'white';
+                    }
+                },
+                colors(sds) {
+                    if (sds < 4) {
+                        return 'red';
+                    } else if (sds < 6) {
+                        return 'pink';
+                    } else {
+                        return 'white';
+                    }
+                },
+                coll(aas) {
+                    if (aas < 3) {
+                        return 'red';
+                    } else if (aas < 4) {
+                        return '#E3170D';
+                    } else if (aas < 7) {
+                        return '#FF7F50';
+                    } else {
+                        return 'white';
+                    }
+                },
+                async fetchData() {
+                    try {
+                        const response = await fetch(`http://3.106.216.241:8000//aadata`);
+                        const data = await response.json();
+                        this.fetchedData = data;
+                    } catch (error) {
+                        console.error('Error fetching data:', error);
+                    }
+                },
+                async geturl(path) {
+                    try {
+                        const response = await fetch(`http://3.106.216.241:5000//requestlink/${path}`);
+						const data = await response.json();
+						console.log(data); 
+						this.ppath = data.url;
+						this.currentVideoPath=path;
+                        // this.ppath = response;
+                    } catch (error) {
+                        console.error('Error fetching data:', error);
+                    }
+                },
+                async allData() {
+                    try {
+                        const response = await fetch(`http://3.106.216.241:5000//Alluser`);
+                        const data = await response.json();
+                        this.durationdata = data;
+                    } catch (error) {
+                        console.error('Error fetching data:', error);
+                    }
+                },
+                async fetchResearchData() {
+                    try {
+                        const response = await fetch(`http://3.106.216.241:5000//searchUser/${this.userid}`);
+                        const data = await response.json();
+                        this.researchData = data;
+                    } catch (error) {
+                        console.error('Error fetching research data:', error);
+                    }
+                },
+                async fetchDetailData() {
+                    try {
+                        const response = await fetch(`http://3.106.216.241:5000//searchdetail/${this.userid1}`);
+                        const data = await response.json();
+                        this.detailData = data;
+                    } catch (error) {
+                        console.error('Error fetching detail data:', error);
+                    }
+                },
+                async fetchAAData() {
+                    const today = new Date();
+                    today.setDate(today.getDate() - 1);
+                    const year = today.getFullYear();
+                    const month = String(today.getMonth() + 1).padStart(2, '0');
+                    const day = String(today.getDate()).padStart(2, '0');
+                    const yesterday = `${year}-${month}-${day}`;
+                    try {
+                        const response = await fetch(`http://3.106.216.241:5000//Infm/${yesterday}`);
+                        const data = await response.json();
+                        this.aaData = data;
+                    } catch (error) {
+                        console.error('Error fetching AA data:', error);
+                    }
+                },
+            },
+        };
+        Vue.createApp(App).mount('#app');
+    </script>
+</body>
+</html>

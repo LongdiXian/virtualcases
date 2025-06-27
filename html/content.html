@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Case Details</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2.8/dist/vue.global.prod.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px auto;
+      max-width: 600px;
+      background-color: #f9f9f9;
+	  min-height: 100vh;
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-top: 30px;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    pre {
+      background: #eee;
+      padding: 15px;
+      border-radius: 5px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-size: 1rem;
+      color: #555;
+      border: 1px solid #ccc;
+	  max-height: 400px;   /* 你可以调整高度 */
+	  overflow: auto;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 30px;
+      display: block;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <template v-if="content.length > 0">
+      <div v-for="(item, index) in content" :key="index">
+        <h1>{{ item.name }}</h1>
+        <div>{{ item.conent }}</div>
+      </div>
+    </template>
+    <p v-else>Loading or no data available...</p>
+    <button @click="closeWindow">Return to last page</button>
+    <button @click="Gomain">Return to main page</button>
+  </div>
+
+  <script>
+    const App = {
+      data() {
+        return {
+          content: [],
+        };
+      },
+      mounted() {
+        this.loadCaseData();
+      },
+      methods: {
+        loadCaseData() {
+          try {
+            const rawData = localStorage.getItem('content');
+            if (rawData) {
+              this.content = JSON.parse(rawData);
+              localStorage.removeItem('content');
+            }
+          } catch (e) {
+            console.error('Error parsing case data:', e);
+          }
+        },
+        closeWindow() {
+          window.location.href = 'index.html';
+        },
+        Gomain() {
+          window.location.href = 'index.html';
+        }
+      }
+    }
+    Vue.createApp(App).mount('#app');
+  </script>
+</body>
+</html>
