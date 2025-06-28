@@ -63,7 +63,7 @@ def case(content):
 
 @app.route('/index')
 def home():
-    return render_template('index.html')
+    return render_template('index_test.html')
 
 @app.route("/casenumber/<chapter>", methods=["GET"])
 def casenumber(chapter):
