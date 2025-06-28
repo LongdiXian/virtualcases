@@ -66,11 +66,11 @@ def home():
     return render_template('index_test.html')
 
 @app.route('/case')
-def case():
+def case_page():
     return render_template('case.html')
 
 @app.route('/content')
-def content():
+def content_page():
     return render_template('content.html')
 
 
