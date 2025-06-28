@@ -1,5 +1,5 @@
 import os
-from flask import Flask,jsonify
+from flask import Flask,jsonify,render_template
 from flask_cors import CORS
 from psycopg2.pool import SimpleConnectionPool
 
@@ -60,6 +60,10 @@ def case(content):
     finally:
         if conn1:
             release_db_connection(conn1)
+
+@app.route('/index')
+def home():
+    return render_template('index.html')
 
 @app.route("/casenumber/<chapter>", methods=["GET"])
 def casenumber(chapter):
