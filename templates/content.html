@@ -48,6 +48,7 @@
 </head>
 <body>
   <div id="app">
+	  {% raw %}
     <template v-if="content.length > 0">
       <div v-for="(item, index) in content" :key="index">
         <h1>{{ item.name }}</h1>
@@ -57,6 +58,8 @@
     <p v-else>Loading or no data available...</p>
     <button @click="closeWindow">Return to last page</button>
     <button @click="Gomain">Return to main page</button>
+	{% endraw %}
+
   </div>
 
   <script>
@@ -82,10 +85,10 @@
           }
         },
         closeWindow() {
-          window.location.href = 'index.html';
+          window.location.href = 'http://3.27.59.252:8000/index';
         },
         Gomain() {
-          window.location.href = 'index.html';
+          window.location.href = 'http://3.27.59.252:8000/index';
         }
       }
     }
