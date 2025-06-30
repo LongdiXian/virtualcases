@@ -94,26 +94,32 @@
           }
         },
         async openCase(caseName) {
-
-            // 编码caseName，防止特殊字符影响URL
+        try {
             const encodedCase = encodeURIComponent(caseName);
             const url = `http://3.27.59.252:8000/case/${encodedCase}`;
             const response = await fetch(url);
             if (!response.ok) throw new Error('Network response was not ok');
             const caseData = await response.json();
 
-            const cs = encodeURIComponent(caseName);
-            const url1 = `http://3.27.59.252:8000/casenumber/${cs}`;
+            const url1 = `http://3.27.59.252:8000/casenumber/${encodedCase}`;
             const response1 = await fetch(url1);
             if (!response1.ok) throw new Error('Network response was not ok');
             const caseData1 = await response1.json();
 
-            localStorage.setItem('caseData', JSON.stringify(caseData));
-            localStorage.setItem('casenumber', JSON.stringify(caseData1));
+            if (typeof localStorage !== 'undefined' && localStorage !== null) {
+                localStorage.setItem('caseData', JSON.stringify(caseData));
+                localStorage.setItem('casenumber', JSON.stringify(caseData1));
+            } else {
+                console.error('localStorage is not available');
+            }
 
             window.location.href = 'http://3.27.59.252:8000/case';
             window.close();
-        },
+
+        } catch (err) {
+            console.error('获取案例数据失败:', err);
+        }
+    },
       },
     };
     Vue.createApp(App).mount('#app');
