@@ -114,11 +114,8 @@
             localStorage.setItem('caseData', JSON.stringify(caseData));
             localStorage.setItem('casenumber', JSON.stringify(caseData1));
 
-            // 打开新窗口显示详情页面
-            const newWindow = window.open('http://3.27.59.252:8000/case', '_blank');
-            if (!newWindow) {
-              alert('请允许弹出窗口以查看详情');
-            }
+            window.location.href = 'http://3.27.59.252:8000/case';
+            window.close();
           } catch (error) {
             alert('获取案例数据失败: ' + error.message);
           }

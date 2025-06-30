@@ -56,7 +56,7 @@
       </div>
     </template>
     <p v-else>Loading or no data available...</p>
-    <button @click="closeWindow">Return to last page</button>
+    <button @click="returntolastpage">Return to last page</button>
     <button @click="Gomain">Return to main page</button>
 	{% endraw %}
 
@@ -84,11 +84,26 @@
             console.error('Error parsing case data:', e);
           }
         },
-        closeWindow() {
-          window.location.href = 'http://3.27.59.252:8000/index';
+        async returntolastpage() {
+		  const name=localStorage.getItem('chapter');
+		  const url = `http://3.27.59.252:8000/case/${name}`;
+		  const response = await fetch(url);
+		  if (!response.ok) throw new Error('Network response was not ok');
+		  const caseData = await response.json();
+		  
+		  const url1 = `http://3.27.59.252:8000/casenumber/${name}`;
+		  const response1 = await fetch(url1);
+		  if (!response1.ok) throw new Error('Network response was not ok');
+		  const caseData1 = await response1.json();
+		  
+		  localStorage.setItem('caseData', JSON.stringify(caseData));
+		  localStorage.setItem('casenumber', JSON.stringify(caseData1));
+          window.location.href = 'http://3.27.59.252:8000/case';
+          window.close();
         },
         Gomain() {
           window.location.href = 'http://3.27.59.252:8000/index';
+          window.close();
         }
       }
     }

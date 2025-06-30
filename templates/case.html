@@ -94,6 +94,9 @@
             if (rawData) {
               this.caseData = JSON.parse(rawData);
               localStorage.removeItem('casenumber');
+              const ass=JSON.parse(rawData);
+			  console.log(ass[0].chapter);
+			  localStorage.setItem('chapter',ass[0].chapter);
             }
 			if(rawData1){
 				this.casenumber = JSON.parse(rawData1);
