@@ -110,7 +110,6 @@
           }
         },
 		async openCase(caseName) {
-		  try {
 		    const encodedCase = encodeURIComponent(caseName);
 		    const url = `http://3.27.59.252:8000/content/${encodedCase}`;
 		    const response = await fetch(url);
@@ -121,9 +120,6 @@
 		
 		    window.location.href = 'http://3.27.59.252:8000/content';
 		  window.close();
-		  } catch (error) {
-		    alert('获取案例数据失败: ' + error.message);
-		  }
 		},
         closeWindow() {
           window.location.href = 'http://3.27.59.252:8000/index';

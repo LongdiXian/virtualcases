@@ -11,8 +11,8 @@
       margin: 20px auto;
       max-width: 600px;
       background-color: #f9f9f9;
-	  min-height: 100vh;
-    padding:15px;
+	   min-height: 100vh;
+     text-align: justify;
     }
     table {
       width: 100%;
@@ -94,7 +94,7 @@
           }
         },
         async openCase(caseName) {
-          try {
+
             // 编码caseName，防止特殊字符影响URL
             const encodedCase = encodeURIComponent(caseName);
             const url = `http://3.27.59.252:8000/case/${encodedCase}`;
@@ -113,9 +113,6 @@
 
             window.location.href = 'http://3.27.59.252:8000/case';
             window.close();
-          } catch (error) {
-            alert('获取案例数据失败: ' + error.message);
-          }
         },
       },
     };
