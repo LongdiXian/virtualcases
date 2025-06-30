@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Case Details</title>
+  <title>Case List</title>
   <script src="https://cdn.jsdelivr.net/npm/vue@3.2.8/dist/vue.global.prod.js"></script>
   <style>
     body {
@@ -11,13 +11,15 @@
       margin: 20px auto;
       max-width: 600px;
       background-color: #f9f9f9;
-	  min-height: 100vh;
+	    min-height: 100vh;
+      padding:15px;
     }
     h1 {
       font-size: 1.5rem;
       margin-top: 30px;
       margin-bottom: 10px;
       color: #333;
+      text-align: center;
     }
     pre {
       background: #eee;
@@ -28,6 +30,7 @@
       font-size: 1rem;
       color: #555;
       border: 1px solid #ccc;
+       text-align: justify;
     }
     button {
       background-color: #4CAF50;
@@ -116,10 +119,8 @@
 			localStorage.setItem('content', JSON.stringify(caseData));
 			console.log(caseData);
 		
-		    const newWindow = window.open('http://3.27.59.252:8000/content', '_blank');
-		    if (!newWindow) {
-		      alert('请允许弹出窗口以查看详情');
-		    }
+		    window.location.href = 'http://3.27.59.252:8000/content';
+		  window.close();
 		  } catch (error) {
 		    alert('获取案例数据失败: ' + error.message);
 		  }
