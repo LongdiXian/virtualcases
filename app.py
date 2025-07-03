@@ -103,7 +103,7 @@ def content(casenumber):
         conn1 = get_db_connection()
         curse1 = conn1.cursor()
         sql = f"""
-                select name,content from public.content where case_number={cont}
+                select name,content from public.content where case_number={cont} ORDER BY id ASC
             """
         print(sql)
         curse1.execute(sql)
