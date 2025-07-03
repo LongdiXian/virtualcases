@@ -113,8 +113,14 @@
                 console.error('localStorage is not available');
             }
 
-            window.location.href = 'http://3.27.59.252:8000/case';
+            const newWindow = window.open('http://3.27.59.252:8000/case', '_blank');
+
+          if (newWindow) {
             window.close();
+          } else {
+            alert('请允许弹出窗口，或手动打开新页面');
+            window.location.href = 'http://3.27.59.252:8000/case';
+          }
 
         } catch (err) {
             console.error('获取案例数据失败:', err);

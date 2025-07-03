@@ -118,16 +118,31 @@
 			localStorage.setItem('content', JSON.stringify(caseData));
 			console.log(caseData);
 		
-		    window.location.href = 'http://3.27.59.252:8000/content';
-		  window.close();
-		},
-        closeWindow() {
+        const newWindow = window.open('http://3.27.59.252:8000/content', '_blank');
+        if (newWindow) {
+          window.close();
+        } else {
+          alert('请允许弹出窗口，或手动打开首页');
           window.location.href = 'http://3.27.59.252:8000/index';
-		  window.close();
-        },
+        }
+		},
+    closeWindow() {
+        const newWindow = window.open('http://3.27.59.252:8000/index', '_blank');
+        if (newWindow) {
+          window.close();
+        } else {
+          alert('请允许弹出窗口，或手动打开首页');
+          window.location.href = 'http://3.27.59.252:8000/index';
+        }
+},
 		Gomain() {
-		  window.location.href = 'http://3.27.59.252:8000/index';
-		  window.close();
+		   const newWindow = window.open('http://3.27.59.252:8000/index', '_blank');
+  if (newWindow) {
+    window.close();
+  } else {
+    alert('请允许弹出窗口，或手动打开首页');
+    window.location.href = 'http://3.27.59.252:8000/index';
+  }
 		}
       }
     }
