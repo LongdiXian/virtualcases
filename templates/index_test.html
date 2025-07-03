@@ -74,28 +74,21 @@
           }
         },
         async openCase(caseName, chapterName) {
-          const win = window.open('', '_blank');
           try {
             const encoded = encodeURIComponent(caseName);
-
             const res = await fetch(`http://3.27.59.252:8000/case/${encoded}`);
             const caseData = await res.json();
-
             const res1 = await fetch(`http://3.27.59.252:8000/casenumber/${encoded}`);
             const caseNumber = await res1.json();
-
             localStorage.setItem('caseData', JSON.stringify(caseData));
             localStorage.setItem('casenumber', JSON.stringify(caseNumber));
             localStorage.setItem('chapter', encoded);
-
-            win.location.href = 'http://3.27.59.252:8000/case';  // ✅ 跳转新窗口
-            window.close(); // ✅ 正确关闭当前窗口
+            const win = window.open('http://3.27.59.252:8000/case', '_blank');
+            if (win) window.close(); else location.href = 'http://3.27.59.252:8000/case';
           } catch (err) {
             console.error('Navigation error:', err);
-            win.close(); // 出错时关闭提前开的空窗口
           }
-      }
-
+        }
       }
     }
     Vue.createApp(App).mount('#app');
