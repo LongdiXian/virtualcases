@@ -98,12 +98,20 @@
       },
       methods: {
         async openCase(caseName) {
+        const win = window.open('', '_blank'); // 立即打开窗口
+
+        try {
           const res = await fetch(`http://3.27.59.252:8000/content/${encodeURIComponent(caseName)}`);
           const data = await res.json();
           localStorage.setItem('content', JSON.stringify(data));
-          const win = window.open('http://3.27.59.252:8000/content', '_blank');
-          if (win) window.close(); else location.href = 'http://3.27.59.252:8000/content';
-        },
+
+          win.location.href = 'http://3.27.59.252:8000/content';
+          window.close(); // 关闭当前窗口
+        } catch (err) {
+          console.error('Failed to open case content:', err);
+          win.close(); // 失败时关闭空窗口
+        }
+      },
         goMain() {
           const win = window.open('http://3.27.59.252:8000/index', '_blank');
           if (win) window.close(); else location.href = 'http://3.27.59.252:8000/index';

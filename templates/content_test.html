@@ -97,6 +97,7 @@
       },
       methods: {
         async returnToCase() {
+          const win = window.open('', '_blank');
           try {
             const chapter = localStorage.getItem('chapter');
             if(chapter){
