@@ -113,6 +113,10 @@
         }
       },
         goMain() {
+          const chapter = localStorage.getItem('chapter');
+          if(chapter){
+              localStorage.removeItem('chapter');
+            }
           const win = window.open('http://3.27.59.252:8000/index', '_blank');
           if (win) window.close(); else location.href = 'http://3.27.59.252:8000/index';
         }
