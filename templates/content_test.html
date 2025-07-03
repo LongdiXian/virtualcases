@@ -99,6 +99,9 @@
         async returnToCase() {
           try {
             const chapter = localStorage.getItem('chapter');
+            if(chapter){
+              localStorage.removeItem('chapter');
+            }
             if (!chapter) throw new Error('Chapter not found in localStorage');
 
             const res = await fetch(`http://3.27.59.252:8000/case/${chapter}`);

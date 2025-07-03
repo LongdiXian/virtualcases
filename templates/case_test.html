@@ -87,8 +87,14 @@
       mounted() {
         const raw = localStorage.getItem('caseData');
         const raw1 = localStorage.getItem('casenumber');
-        if (raw) this.caseData = JSON.parse(raw);
-        if (raw1) this.casenumber = JSON.parse(raw1);
+        if(raw){
+				if (raw) this.caseData = JSON.parse(raw);
+				localStorage.removeItem('caseData');
+			}
+      if(raw1){
+				if (raw1) this.casenumber = JSON.parse(raw1);
+				localStorage.removeItem('casenumber');
+			}  
       },
       methods: {
         async openCase(caseName) {
