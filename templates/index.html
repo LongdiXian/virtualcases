@@ -3,19 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-  <title>EMA Chatbot Administrator</title>
+  <title>Psychiatric Clinical Knowledge Practice Questions</title>
   <script src="https://cdn.jsdelivr.net/npm/vue@3.2.8/dist/vue.global.prod.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0 auto;
-      padding: 10px;
-      background-color: #f5f5f5;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      flex-direction: column;
-      min-height: 100vh;
+      margin: 20px auto;
+      max-width: 600px;
+      background-color: #f9f9f9;
+	   min-height: 100vh;
+     text-align: justify;
     }
     table {
       width: 100%;
@@ -66,10 +63,12 @@
         </tr>
       </thead>
       <tbody>
+        {% raw %}
         <tr v-for="data in fetchedData" :key="data.chapter">
           <td>{{ data.chapter }}</td>
           <td class="clickable" @click="openCase(data.content)">{{ data.content }}</td>
         </tr>
+        {% endraw %}
       </tbody>
     </table>
   </div>
@@ -95,32 +94,38 @@
           }
         },
         async openCase(caseName) {
-          try {
-            // 编码caseName，防止特殊字符影响URL
+        try {
             const encodedCase = encodeURIComponent(caseName);
             const url = `http://3.27.59.252:8000/case/${encodedCase}`;
             const response = await fetch(url);
             if (!response.ok) throw new Error('Network response was not ok');
             const caseData = await response.json();
-			
-			const cs = encodeURIComponent(caseName);
-			const url1 = `http://3.27.59.252:8000/casenumber/${cs}`;
-			const response1 = await fetch(url1);
-			if (!response1.ok) throw new Error('Network response was not ok');
-			const caseData1 = await response1.json();
 
-            localStorage.setItem('caseData', JSON.stringify(caseData));
-			localStorage.setItem('casenumber', JSON.stringify(caseData1));
+            const url1 = `http://3.27.59.252:8000/casenumber/${encodedCase}`;
+            const response1 = await fetch(url1);
+            if (!response1.ok) throw new Error('Network response was not ok');
+            const caseData1 = await response1.json();
 
-            // 打开新窗口显示详情页面
-            const newWindow = window.open('case.html', '_blank');
-            if (!newWindow) {
-              alert('请允许弹出窗口以查看详情');
+            if (typeof localStorage !== 'undefined' && localStorage !== null) {
+                localStorage.setItem('caseData', JSON.stringify(caseData));
+                localStorage.setItem('casenumber', JSON.stringify(caseData1));
+            } else {
+                console.error('localStorage is not available');
             }
-          } catch (error) {
-            alert('获取案例数据失败: ' + error.message);
+
+            const newWindow = window.open('http://3.27.59.252:8000/case', '_blank');
+
+          if (newWindow) {
+            window.close();
+          } else {
+            alert('请允许弹出窗口，或手动打开新页面');
+            window.location.href = 'http://3.27.59.252:8000/case';
           }
-        },
+
+        } catch (err) {
+            console.error('获取案例数据失败:', err);
+        }
+    },
       },
     };
     Vue.createApp(App).mount('#app');

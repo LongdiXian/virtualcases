@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Case Content</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2.8/dist/vue.global.prod.js"></script>
+  <style>
+    body { font-family: Arial; background: #f9f9f9; max-width: 600px; margin: auto; padding: 20px; }
+    h1 { font-size: 1.5rem; color: #333; }
+    pre { background: #eee; padding: 15px; border: 1px solid #ccc; border-radius: 5px; overflow: auto; max-height: 400px; }
+    button { margin-top: 20px; padding: 10px; border: none; border-radius: 5px; background: #4CAF50; color: #fff; cursor: pointer; }
+    button:hover { background: #45a049; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    {% raw %}
+    <template v-if="content.length">
+      <div v-for="item in content" :key="item.name">
+        <h1>{{ item.name }}</h1>
+        <pre>{{ item.conent }}</pre>
+      </div>
+    </template>
+    <p v-else>Loading...</p>
+    <button @click="returnToCase">Return to Case</button>
+    <button @click="goMain">Return to Index</button>
+    {% endraw %}
+  </div>
+  <script>
+    const App = {
+      data() {
+        return { content: [] };
+      },
+      mounted() {
+        const raw = localStorage.getItem('content');
+        if (raw) this.content = JSON.parse(raw);
+      },
+      methods: {
+        async returnToCase() {
+          const chapter = localStorage.getItem('chapter');
+          const res = await fetch(`http://3.27.59.252:8000/case/${encodeURIComponent(chapter)}`);
+          const data = await res.json();
+          const res1 = await fetch(`http://3.27.59.252:8000/casenumber/${encodeURIComponent(chapter)}`);
+          const data1 = await res1.json();
+
+          localStorage.setItem('caseData', JSON.stringify(data));
+          localStorage.setItem('casenumber', JSON.stringify(data1));
+          const win = window.open('http://3.27.59.252:8000/case', '_blank');
+          if (win) window.close();
+          else location.href = 'http://3.27.59.252:8000/case';
+        },
+        goMain() {
+          const win = window.open('http://3.27.59.252:8000/index', '_blank');
+          if (win) window.close();
+          else location.href = 'http://3.27.59.252:8000/index';
+        }
+      }
+    }
+    Vue.createApp(App).mount('#app');
+  </script>
+</body>
+</html>

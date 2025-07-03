@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Case List</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2.8/dist/vue.global.prod.js"></script>
+  <style>
+    body { font-family: Arial; background: #f9f9f9; max-width: 600px; margin: auto; padding: 20px; }
+    h1 { font-size: 1.5rem; color: #333; text-align: center; }
+    pre { background: #eee; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+    button { margin-top: 20px; padding: 10px; border: none; border-radius: 5px; background: #4CAF50; color: #fff; cursor: pointer; }
+    button:hover { background: #45a049; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    {% raw %}
+    <template v-if="caseData.length">
+      <div v-for="item in caseData" :key="item.chapter">
+        <h1>ABSTRACT OF {{ item.chapter }}</h1>
+        <pre>{{ item.content }}</pre>
+      </div>
+      <div v-for="item in casenumber" :key="item.number">
+        <h1 @click="openCase(item.number)" style="cursor:pointer; color:green; text-align:center;">Case {{ item.number }}</h1>
+      </div>
+    </template>
+    <p v-else>Loading or no data...</p>
+    <button @click="goBack">Return to Index</button>
+    {% endraw %}
+  </div>
+  <script>
+    const App = {
+      data() {
+        return { caseData: [], casenumber: [] };
+      },
+      mounted() {
+        const raw = localStorage.getItem('caseData');
+        const raw1 = localStorage.getItem('casenumber');
+        if (raw) this.caseData = JSON.parse(raw);
+        if (raw1) this.casenumber = JSON.parse(raw1);
+      },
+      methods: {
+        async openCase(caseName) {
+          const res = await fetch(`http://3.27.59.252:8000/content/${encodeURIComponent(caseName)}`);
+          const data = await res.json();
+          localStorage.setItem('content', JSON.stringify(data));
+          const win = window.open('http://3.27.59.252:8000/content', '_blank');
+          if (win) window.close();
+          else location.href = 'http://3.27.59.252:8000/content';
+        },
+        goBack() {
+          const win = window.open('http://3.27.59.252:8000/index', '_blank');
+          if (win) window.close();
+          else location.href = 'http://3.27.59.252:8000/index';
+        }
+      }
+    }
+    Vue.createApp(App).mount('#app');
+  </script>
+</body>
+</html>

@@ -67,11 +67,11 @@ def home():
 
 @app.route('/case')
 def case_page():
-    return render_template('case.html')
+    return render_template('case_test.html')
 
 @app.route('/content')
 def content_page():
-    return render_template('content.html')
+    return render_template('content_test.html')
 
 
 @app.route("/casenumber/<chapter>", methods=["GET"])

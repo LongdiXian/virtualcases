@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Psychiatric Clinical Knowledge Practice Questions</title>
   <script src="https://cdn.jsdelivr.net/npm/vue@3.2.8/dist/vue.global.prod.js"></script>
   <style>
@@ -11,22 +11,19 @@
       margin: 20px auto;
       max-width: 600px;
       background-color: #f9f9f9;
-	   min-height: 100vh;
-     text-align: justify;
+      min-height: 100vh;
+      text-align: justify;
     }
     table {
       width: 100%;
-      max-width: 600px;
       border-collapse: collapse;
       background-color: #fff;
-      margin: 20px auto 0 auto;
-      font-size: 1rem;
+      margin: 20px 0;
     }
     th, td {
       padding: 10px;
       text-align: left;
       border: 1px solid #ddd;
-      word-break: break-word;
     }
     th {
       background-color: #f0f0f0;
@@ -34,99 +31,66 @@
     td.clickable {
       color: #007BFF;
       cursor: pointer;
-      user-select: none;
     }
     td.clickable:hover {
       text-decoration: underline;
-    }
-    @media (max-width: 480px) {
-      body {
-        padding: 5px;
-      }
-      table {
-        font-size: 0.9rem;
-        max-width: 100%;
-      }
-      th, td {
-        padding: 8px;
-      }
     }
   </style>
 </head>
 <body>
   <div id="app">
+    {% raw %}
     <table>
       <thead>
-        <tr>
-          <th>Chapter</th>
-          <th>Disorders' Name</th>
-        </tr>
+        <tr><th>Chapter</th><th>Disorder Name</th></tr>
       </thead>
       <tbody>
-        {% raw %}
         <tr v-for="data in fetchedData" :key="data.chapter">
           <td>{{ data.chapter }}</td>
-          <td class="clickable" @click="openCase(data.content)">{{ data.content }}</td>
+          <td class="clickable" @click="openCase(data.content, data.chapter)">{{ data.content }}</td>
         </tr>
-        {% endraw %}
       </tbody>
     </table>
+    {% endraw %}
   </div>
 
   <script>
     const App = {
       data() {
-        return {
-          fetchedData: [],
-        };
+        return { fetchedData: [] };
       },
-      async created() {
-        await this.fetchData();
-      },
+      mounted() { this.fetchData(); },
       methods: {
         async fetchData() {
           try {
-            const response = await fetch(`http://3.27.59.252:8000/all`);
+            const response = await fetch('http://3.27.59.252:8000/all');
             const data = await response.json();
             this.fetchedData = data;
-          } catch (error) {
-            console.error('Error fetching data:', error);
+          } catch (err) {
+            console.error('Fetch failed:', err);
           }
         },
-        async openCase(caseName) {
-        try {
+        async openCase(caseName, chapterName) {
+          try {
             const encodedCase = encodeURIComponent(caseName);
-            const url = `http://3.27.59.252:8000/case/${encodedCase}`;
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('Network response was not ok');
+            const response = await fetch(`http://3.27.59.252:8000/case/${encodedCase}`);
             const caseData = await response.json();
-
-            const url1 = `http://3.27.59.252:8000/casenumber/${encodedCase}`;
-            const response1 = await fetch(url1);
-            if (!response1.ok) throw new Error('Network response was not ok');
+            const response1 = await fetch(`http://3.27.59.252:8000/casenumber/${encodedCase}`);
             const caseData1 = await response1.json();
 
-            if (typeof localStorage !== 'undefined' && localStorage !== null) {
-                localStorage.setItem('caseData', JSON.stringify(caseData));
-                localStorage.setItem('casenumber', JSON.stringify(caseData1));
-            } else {
-                console.error('localStorage is not available');
-            }
+            localStorage.setItem('caseData', JSON.stringify(caseData));
+            localStorage.setItem('casenumber', JSON.stringify(caseData1));
+            localStorage.setItem('chapter', chapterName);
 
-            const newWindow = window.open('http://3.27.59.252:8000/case', '_blank');
+            const win = window.open('http://3.27.59.252:8000/case', '_blank');
+            if (win) window.close();
+            else location.href = 'http://3.27.59.252:8000/case';
 
-          if (newWindow) {
-            window.close();
-          } else {
-            alert('请允许弹出窗口，或手动打开新页面');
-            window.location.href = 'http://3.27.59.252:8000/case';
+          } catch (e) {
+            console.error('Navigation failed:', e);
           }
-
-        } catch (err) {
-            console.error('获取案例数据失败:', err);
         }
-    },
-      },
+      }
     };
     Vue.createApp(App).mount('#app');
   </script>
