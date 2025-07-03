@@ -101,10 +101,10 @@
             const chapter = localStorage.getItem('chapter');
             if (!chapter) throw new Error('Chapter not found in localStorage');
 
-            const res = await fetch(`http://3.27.59.252:8000/case/${encodeURIComponent(chapter)}`);
+            const res = await fetch(`http://3.27.59.252:8000/case/${chapter}`);
             const data = await res.json();
 
-            const res1 = await fetch(`http://3.27.59.252:8000/casenumber/${encodeURIComponent(chapter)}`);
+            const res1 = await fetch(`http://3.27.59.252:8000/casenumber/${chapter}`);
             const data1 = await res1.json();
 
             localStorage.setItem('caseData', JSON.stringify(data));
