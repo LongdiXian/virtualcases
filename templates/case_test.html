@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -6,11 +5,64 @@
   <title>Case List</title>
   <script src="https://cdn.jsdelivr.net/npm/vue@3.2.8/dist/vue.global.prod.js"></script>
   <style>
-    body { font-family: Arial; background: #f9f9f9; max-width: 600px; margin: auto; padding: 20px; }
-    h1 { font-size: 1.5rem; color: #333; text-align: center; }
-    pre { background: #eee; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
-    button { margin-top: 20px; padding: 10px; border: none; border-radius: 5px; background: #4CAF50; color: #fff; cursor: pointer; }
-    button:hover { background: #45a049; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 1.5rem;
+      color: #333;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .abstract-box {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 16px;
+      margin-top: 10px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-size: 1rem;
+    }
+    .clickable-title {
+      border: 2px solid #4CAF50;
+      border-radius: 8px;
+      padding: 12px;
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      text-align: center;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s;
+    }
+    .clickable-title:hover {
+      background-color: #c8e6c9;
+    }
+    button {
+      margin-top: 30px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+      display: block;
+      width: 100%;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      .abstract-box, .clickable-title { font-size: 0.95rem; }
+    }
   </style>
 </head>
 <body>
@@ -19,21 +71,19 @@
     <template v-if="caseData.length">
       <div v-for="item in caseData" :key="item.chapter">
         <h1>ABSTRACT OF {{ item.chapter }}</h1>
-        <pre>{{ item.content }}</pre>
+        <div class="abstract-box">{{ item.content }}</div>
       </div>
-      <div v-for="item in casenumber" :key="item.number">
-        <h1 @click="openCase(item.number)" style="cursor:pointer; color:green; text-align:center;">Case {{ item.number }}</h1>
+      <div v-for="item in casenumber" :key="item.number" class="clickable-title" @click="openCase(item.number)">
+        Case {{ item.number }}
       </div>
     </template>
-    <p v-else>Loading or no data...</p>
-    <button @click="goBack">Return to Index</button>
+    <p v-else>Loading or no data available...</p>
+    <button @click="goMain">Return to Index</button>
     {% endraw %}
   </div>
   <script>
     const App = {
-      data() {
-        return { caseData: [], casenumber: [] };
-      },
+      data() { return { caseData: [], casenumber: [] }; },
       mounted() {
         const raw = localStorage.getItem('caseData');
         const raw1 = localStorage.getItem('casenumber');
@@ -46,13 +96,11 @@
           const data = await res.json();
           localStorage.setItem('content', JSON.stringify(data));
           const win = window.open('http://3.27.59.252:8000/content', '_blank');
-          if (win) window.close();
-          else location.href = 'http://3.27.59.252:8000/content';
+          if (win) window.close(); else location.href = 'http://3.27.59.252:8000/content';
         },
-        goBack() {
+        goMain() {
           const win = window.open('http://3.27.59.252:8000/index', '_blank');
-          if (win) window.close();
-          else location.href = 'http://3.27.59.252:8000/index';
+          if (win) window.close(); else location.href = 'http://3.27.59.252:8000/index';
         }
       }
     }

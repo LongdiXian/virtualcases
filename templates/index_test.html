@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,22 +9,23 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 20px auto;
-      max-width: 600px;
-      background-color: #f9f9f9;
-      min-height: 100vh;
-      text-align: justify;
+      background: #f9f9f9;
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+      box-sizing: border-box;
     }
     table {
       width: 100%;
       border-collapse: collapse;
       background-color: #fff;
-      margin: 20px 0;
+      margin-top: 20px;
     }
     th, td {
       padding: 10px;
+      border: 1px solid #ccc;
       text-align: left;
-      border: 1px solid #ddd;
+      word-break: break-word;
     }
     th {
       background-color: #f0f0f0;
@@ -34,6 +36,11 @@
     }
     td.clickable:hover {
       text-decoration: underline;
+    }
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      table { font-size: 0.95rem; }
+      th, td { padding: 8px; }
     }
   </style>
 </head>
@@ -53,45 +60,37 @@
     </table>
     {% endraw %}
   </div>
-
   <script>
     const App = {
-      data() {
-        return { fetchedData: [] };
-      },
+      data() { return { fetchedData: [] }; },
       mounted() { this.fetchData(); },
       methods: {
         async fetchData() {
           try {
-            const response = await fetch('http://3.27.59.252:8000/all');
-            const data = await response.json();
-            this.fetchedData = data;
+            const res = await fetch('http://3.27.59.252:8000/all');
+            this.fetchedData = await res.json();
           } catch (err) {
-            console.error('Fetch failed:', err);
+            console.error('Failed to load data:', err);
           }
         },
         async openCase(caseName, chapterName) {
           try {
-            const encodedCase = encodeURIComponent(caseName);
-            const response = await fetch(`http://3.27.59.252:8000/case/${encodedCase}`);
-            const caseData = await response.json();
-            const response1 = await fetch(`http://3.27.59.252:8000/casenumber/${encodedCase}`);
-            const caseData1 = await response1.json();
-
+            const encoded = encodeURIComponent(caseName);
+            const res = await fetch(`http://3.27.59.252:8000/case/${encoded}`);
+            const caseData = await res.json();
+            const res1 = await fetch(`http://3.27.59.252:8000/casenumber/${encoded}`);
+            const caseNumber = await res1.json();
             localStorage.setItem('caseData', JSON.stringify(caseData));
-            localStorage.setItem('casenumber', JSON.stringify(caseData1));
+            localStorage.setItem('casenumber', JSON.stringify(caseNumber));
             localStorage.setItem('chapter', chapterName);
-
             const win = window.open('http://3.27.59.252:8000/case', '_blank');
-            if (win) window.close();
-            else location.href = 'http://3.27.59.252:8000/case';
-
-          } catch (e) {
-            console.error('Navigation failed:', e);
+            if (win) window.close(); else location.href = 'http://3.27.59.252:8000/case';
+          } catch (err) {
+            console.error('Navigation error:', err);
           }
         }
       }
-    };
+    }
     Vue.createApp(App).mount('#app');
   </script>
 </body>

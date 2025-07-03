@@ -6,11 +6,66 @@
   <title>Case Content</title>
   <script src="https://cdn.jsdelivr.net/npm/vue@3.2.8/dist/vue.global.prod.js"></script>
   <style>
-    body { font-family: Arial; background: #f9f9f9; max-width: 600px; margin: auto; padding: 20px; }
-    h1 { font-size: 1.5rem; color: #333; }
-    pre { background: #eee; padding: 15px; border: 1px solid #ccc; border-radius: 5px; overflow: auto; max-height: 400px; }
-    button { margin-top: 20px; padding: 10px; border: none; border-radius: 5px; background: #4CAF50; color: #fff; cursor: pointer; }
-    button:hover { background: #45a049; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      margin: 0 auto;
+      padding: 20px;
+      max-width: 800px;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      color: #333;
+      margin-top: 20px;
+    }
+
+    .content-box {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 10px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-size: 1rem;
+      color: #333;
+    }
+
+    button {
+      margin-top: 30px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+      display: block;
+      width: 100%;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      h1 {
+        font-size: 1.2rem;
+      }
+
+      .content-box {
+        font-size: 0.95rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -19,7 +74,7 @@
     <template v-if="content.length">
       <div v-for="item in content" :key="item.name">
         <h1>{{ item.name }}</h1>
-        <pre>{{ item.conent }}</pre>
+        <div class="content-box">{{ item.conent }}</div>
       </div>
     </template>
     <p v-else>Loading...</p>
@@ -34,21 +89,33 @@
       },
       mounted() {
         const raw = localStorage.getItem('content');
-        if (raw) this.content = JSON.parse(raw);
+        if (raw) {
+          this.content = JSON.parse(raw);
+        } else {
+          console.warn('No content found in localStorage.');
+        }
       },
       methods: {
         async returnToCase() {
-          const chapter = localStorage.getItem('chapter');
-          const res = await fetch(`http://3.27.59.252:8000/case/${encodeURIComponent(chapter)}`);
-          const data = await res.json();
-          const res1 = await fetch(`http://3.27.59.252:8000/casenumber/${encodeURIComponent(chapter)}`);
-          const data1 = await res1.json();
+          try {
+            const chapter = localStorage.getItem('chapter');
+            if (!chapter) throw new Error('Chapter not found in localStorage');
 
-          localStorage.setItem('caseData', JSON.stringify(data));
-          localStorage.setItem('casenumber', JSON.stringify(data1));
-          const win = window.open('http://3.27.59.252:8000/case', '_blank');
-          if (win) window.close();
-          else location.href = 'http://3.27.59.252:8000/case';
+            const res = await fetch(`http://3.27.59.252:8000/case/${encodeURIComponent(chapter)}`);
+            const data = await res.json();
+
+            const res1 = await fetch(`http://3.27.59.252:8000/casenumber/${encodeURIComponent(chapter)}`);
+            const data1 = await res1.json();
+
+            localStorage.setItem('caseData', JSON.stringify(data));
+            localStorage.setItem('casenumber', JSON.stringify(data1));
+
+            const win = window.open('http://3.27.59.252:8000/case', '_blank');
+            if (win) window.close();
+            else location.href = 'http://3.27.59.252:8000/case';
+          } catch (err) {
+            console.error('Failed to return to case:', err);
+          }
         },
         goMain() {
           const win = window.open('http://3.27.59.252:8000/index', '_blank');
@@ -56,7 +123,7 @@
           else location.href = 'http://3.27.59.252:8000/index';
         }
       }
-    }
+    };
     Vue.createApp(App).mount('#app');
   </script>
 </body>
