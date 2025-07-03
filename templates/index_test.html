@@ -82,7 +82,7 @@
             const caseNumber = await res1.json();
             localStorage.setItem('caseData', JSON.stringify(caseData));
             localStorage.setItem('casenumber', JSON.stringify(caseNumber));
-            localStorage.setItem('chapter', chapterName);
+            localStorage.setItem('chapter', encoded);
             const win = window.open('http://3.27.59.252:8000/case', '_blank');
             if (win) window.close(); else location.href = 'http://3.27.59.252:8000/case';
           } catch (err) {
